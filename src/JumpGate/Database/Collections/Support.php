@@ -1,8 +1,8 @@
 <?php
 
-namespace JumpGate\Database;
+namespace JumpGate\Database\Collections;
 
-use Illuminate\Database\Eloquent\Collection as BaseCollection;
+use Illuminate\Database\Support\Collection;
 
 /**
  * Class Collection
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection as BaseCollection;
  *
  * @package JumpGate\Core\Database
  */
-class Collection extends BaseCollection
+class Support extends Collection
 {
     /**
      * Dynamically retrieve attributes on the model.
