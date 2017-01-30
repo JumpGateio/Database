@@ -2,7 +2,7 @@
 
 namespace JumpGate\Database\Models;
 
-class Migration extends \BaseModel
+class Migration extends BaseModel
 {
     protected $table = 'migrations';
 

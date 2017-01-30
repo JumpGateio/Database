@@ -1,12 +1,12 @@
 <?php
 
-namespace spec\JumpGate\Database;
+namespace spec\JumpGate\Database\Collections;
 
-use JumpGate\Database\Collections\Eloquent;
+use JumpGate\Database\Collections\EloquentCollection;
 use PhpSpec\ObjectBehavior;
 use stdClass;
 
-class CollectionSpec extends ObjectBehavior {
+class EloquentCollectionSpec extends ObjectBehavior {
 
     function let()
     {
@@ -59,7 +59,7 @@ class CollectionSpec extends ObjectBehavior {
             $newParent->name = $data['name'];
             $newParent->age = $data['age'];
 
-            $newParent->kids = new Eloquent();
+            $newParent->kids = new EloquentCollection();
             $newChild = new stdClass();
             $newChild->name = $data['kids']['name'];
             $newChild->age = $data['kids']['age'];
@@ -68,9 +68,9 @@ class CollectionSpec extends ObjectBehavior {
         }
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
-        $this->shouldHaveType('JumpGate\Database\Collections\Eloquent');
+        $this->shouldHaveType('JumpGate\Database\Collections\EloquentCollection');
     }
 
     public function it_gets_results_where_key_is_equal_to_given_value()
@@ -214,6 +214,6 @@ class CollectionSpec extends ObjectBehavior {
 
         $data->first()->shouldBe('zack');
         $data->shouldHaveCount(1);
-        $data->shouldHaveType('JumpGate\Database\Collections\Eloquent');
+        $data->shouldHaveType('JumpGate\Database\Collections\EloquentCollection');
     }
 }

@@ -2,8 +2,7 @@
 
 namespace JumpGate\Database\Collections;
 
-use Illuminate\Database\Eloquent\Collection;
-use JumpGate\Database\Traits\Chainable;
+use Illuminate\Database\Support\Collection;
 
 /**
  * Class Collection
@@ -14,13 +13,41 @@ use JumpGate\Database\Traits\Chainable;
  *
  * @package JumpGate\Core\Database
  */
-class Eloquent extends Collection
+class SupportCollection extends Collection
 {
     /**
-     * Allow relationship chaining.
+     * Dynamically retrieve attributes on the model.
+     *
+     * @param  string $key
+     *
+     * @return mixed
      */
-    use Chainable;
+    public function __get($key)
+    {
+        $newCollection = new self();
 
+        foreach ($this->items as $item) {
+            if ($item instanceof self) { // This item is a collection.
+                foreach ($item as $subItem) {
+                    $newCollection->put($newCollection->count(), $subItem->$key);
+                }
+
+                continue;
+            }
+
+            if (is_object($item) && ! $item instanceof self && $item->$key instanceof self) { // Next tap is a collection.
+                foreach ($item->$key as $subItem) {
+                    $newCollection->put($newCollection->count(), $subItem);
+                }
+
+                continue;
+            }
+
+            $newCollection->put($newCollection->count(), $item->$key);
+        }
+
+        return $newCollection;
+    }
 
     /**
      * Allow a method to be run on the entire collection.
@@ -244,6 +271,51 @@ class Eloquent extends Collection
         }
 
         return $output;
+    }
+
+    /**
+     * @param $item
+     * @param $column
+     * @param $value
+     * @param $operator
+     * @param $inverse
+     *
+     * @return bool
+     */
+    private function handleMultiTap($item, $column, $value, $operator, $inverse)
+    {
+        list($objectToSearch, $columnToSearch) = $this->tapThroughObjects($column, $item);
+
+        if ($objectToSearch instanceof self) {
+            foreach ($objectToSearch as $subObject) {
+                // The column has a tap that ends in a collection.
+                return $this->whereObject($subObject, $columnToSearch, $operator, $value, $inverse);
+            }
+        } else {
+            // The column has a tap that ends in direct access
+            return $this->whereObject($objectToSearch, $columnToSearch, $operator, $value, $inverse);
+        }
+    }
+
+    /**
+     * @param $column
+     * @param $item
+     *
+     * @return mixed
+     */
+    private function tapThroughObjects($column, $item)
+    {
+        $taps = explode('->', $column);
+
+        $objectToSearch = $item;
+        $columnToSearch = array_pop($taps);
+
+        foreach ($taps as $tapKey => $tap) {
+            // Keep tapping till we hit the last object.
+            $objectToSearch = $objectToSearch->$tap;
+        }
+
+        return [$objectToSearch, $columnToSearch];
     }
 
     /**

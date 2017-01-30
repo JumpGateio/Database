@@ -2,7 +2,7 @@
 
 namespace JumpGate\Database\Models;
 
-class Seed extends \BaseModel
+class Seed extends BaseModel
 {
     protected $table = 'seeds';
 
