@@ -7,20 +7,6 @@ use Illuminate\Support\Str;
 trait HasUniqueColumns
 {
     /**
-     * Any field in this array will be populated with a unique string on create.
-     *
-     * @var array
-     */
-    protected static $uniqueStringColumns = [];
-
-    /**
-     * The size string to generate for unique string column.
-     *
-     * @var int
-     */
-    protected static $uniqueStringLimit = 10;
-
-    /**
      * Make sure that any unique column is given a unique string.
      */
     protected static function handleUniqueColumns()
@@ -35,7 +21,7 @@ trait HasUniqueColumns
         }
 
         // If any fields are marked for unique strings, add them.
-        if (count($class::$uniqueStringColumns) > 0) {
+        if (isset($class::$uniqueStringColumns) && count($class::$uniqueStringColumns) > 0) {
             foreach ($class::$uniqueStringColumns as $field) {
                 $class::creating(function ($object) use ($class, $field) {
                     $object->{$field} = $class::findExistingReferences($class, $field);
