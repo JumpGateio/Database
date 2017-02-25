@@ -1,14 +1,14 @@
 {
-    "name":        "jumpgate/database",
+    "name": "jumpgate/database",
     "description": "Database helpers for Laravel sites.",
-    "license":     "MIT",
-    "authors":     [
+    "license": "MIT",
+    "authors": [
         {
-            "name":  "Travis Blasingame",
+            "name": "Travis Blasingame",
             "email": "tpblasingame@gmail.com"
         },
         {
-            "name":  "Brandon Hyde",
+            "name": "Brandon Hyde",
             "email": "hyde.brandon@gmail.com"
         }
     ],
@@ -21,8 +21,11 @@
         "orchestra/testbench": "~3.4",
         "phpunit/phpunit": "~5.7"
     },
-    "autoload":    {
-        "psr-4":    {
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
             "Tests\\": "tests",
             "JumpGate\\Database\\": "src/JumpGate/Database"
         }
