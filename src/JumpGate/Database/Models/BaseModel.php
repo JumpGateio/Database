@@ -3,8 +3,8 @@
 namespace JumpGate\Database\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use JumpGate\Database\Collection;
 use Illuminate\Support\Str;
+use JumpGate\Database\Collections\EloquentCollection;
 
 /**
  * @property string $uniqueId
@@ -62,12 +62,12 @@ abstract class BaseModel extends Model
      *
      * @param array $models An array of models to turn into a collection.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection OR \JumpGate\Database\Collections\EloquentCollection
      */
     public function newCollection(array $models = [])
     {
         if ($this->jumpGateCollections) {
-            return new Collection($models);
+            return new EloquentCollection($models);
         }
 
         return parent::newCollection($models);

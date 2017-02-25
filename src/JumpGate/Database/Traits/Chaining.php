@@ -2,7 +2,7 @@
 
 namespace JumpGate\Database\Traits;
 
-trait Chainable {
+trait Chaining {
 
     /**
      * Dynamically retrieve attributes on the model.
@@ -11,7 +11,7 @@ trait Chainable {
      *
      * @return mixed
      */
-    public function __get($key)
+    public function chainingGetMethod($key)
     {
         $newCollection = new self();
 
@@ -40,6 +40,19 @@ trait Chainable {
         return $newCollection;
     }
 
+    public function chainingCallMethod($method, $args)
+    {
+        // Run the command on each object in the collection.
+        foreach ($this->items as $item) {
+            if (! is_object($item)) {
+                continue;
+            }
+            call_user_func_array([$item, $method], $args);
+        }
+
+        return $this;
+    }
+
     /**
      * @param $item
      * @param $column
@@ -63,6 +76,7 @@ trait Chainable {
             return $this->whereObject($objectToSearch, $columnToSearch, $operator, $value, $inverse);
         }
     }
+
 
     /**
      * @param $column

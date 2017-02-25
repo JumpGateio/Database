@@ -1,135 +1,12 @@
 <?php
 
-namespace JumpGate\Database\Collections;
+namespace JumpGate\Database\Traits;
 
-use Illuminate\Database\Support\Collection;
+trait Searching {
 
-/**
- * Class Collection
- *
- * This class adds some magic to the collection class.
- * It allows you to tab through collections into other object or collections.
- * It also allows you to run a getWhere on a collection to find objects.
- *
- * @package JumpGate\Core\Database
- */
-class SupportCollection extends Collection
-{
-    /**
-     * Dynamically retrieve attributes on the model.
-     *
-     * @param  string $key
-     *
-     * @return mixed
-     */
-    public function __get($key)
+    public function searchingCallMethod($method, $args)
     {
-        $newCollection = new self();
-
-        foreach ($this->items as $item) {
-            if ($item instanceof self) { // This item is a collection.
-                foreach ($item as $subItem) {
-                    $newCollection->put($newCollection->count(), $subItem->$key);
-                }
-
-                continue;
-            }
-
-            if (is_object($item) && ! $item instanceof self && $item->$key instanceof self) { // Next tap is a collection.
-                foreach ($item->$key as $subItem) {
-                    $newCollection->put($newCollection->count(), $subItem);
-                }
-
-                continue;
-            }
-
-            $newCollection->put($newCollection->count(), $item->$key);
-        }
-
-        return $newCollection;
-    }
-
-    /**
-     * Allow a method to be run on the entire collection.
-     *
-     * @param string $method
-     * @param array  $args
-     *
-     * @return Collection
-     */
-    public function __call($method, $args)
-    {
-        // Look for magic where calls.
-        if (strstr($method, 'getWhere')) {
-            return $this->magicWhere(snake_case($method), $args);
-        }
-
-        // No data in the collection.
-        if ($this->count() <= 0) {
-            return $this;
-        }
-
-        // Run the command on each object in the collection.
-        foreach ($this->items as $item) {
-            if (! is_object($item)) {
-                continue;
-            }
-            call_user_func_array([$item, $method], $args);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Insert into an object
-     *
-     * Should be able to do this with methods
-     * that already exist on collection.
-     *
-     * @param mixed $value
-     * @param int   $afterKey
-     *
-     * @return Collection
-     */
-    public function insertAfter($value, $afterKey)
-    {
-        $new_object = new self();
-
-        foreach ((array)$this->items as $k => $v) {
-            if ($afterKey == $k) {
-                $new_object->add($value);
-            }
-
-            $new_object->add($v);
-        }
-
-        $this->items = $new_object->items;
-
-        return $this;
-    }
-
-    /**
-     * Turn a collection into a drop down for an html select element.
-     *
-     * @param  string $firstOptionText Text for the first object in the select array.
-     * @param  string $id              The column to use for the id column in the option element.
-     * @param  string $name            The column to use for the name column in the option element.
-     *
-     * @return array                    The new select element array.
-     */
-    public function toSelectArray($firstOptionText = 'Select one', $id = 'id', $name = 'name')
-    {
-        $selectArray = [];
-
-        if ($firstOptionText != false) {
-            $selectArray[0] = $firstOptionText;
-        }
-
-        foreach ($this->items as $item) {
-            $selectArray[$item->{$id}] = $item->{$name};
-        }
-
-        return $selectArray;
+        return $this->magicWhere(snake_case($method), $args);
     }
 
     /**
@@ -271,51 +148,6 @@ class SupportCollection extends Collection
         }
 
         return $output;
-    }
-
-    /**
-     * @param $item
-     * @param $column
-     * @param $value
-     * @param $operator
-     * @param $inverse
-     *
-     * @return bool
-     */
-    private function handleMultiTap($item, $column, $value, $operator, $inverse)
-    {
-        list($objectToSearch, $columnToSearch) = $this->tapThroughObjects($column, $item);
-
-        if ($objectToSearch instanceof self) {
-            foreach ($objectToSearch as $subObject) {
-                // The column has a tap that ends in a collection.
-                return $this->whereObject($subObject, $columnToSearch, $operator, $value, $inverse);
-            }
-        } else {
-            // The column has a tap that ends in direct access
-            return $this->whereObject($objectToSearch, $columnToSearch, $operator, $value, $inverse);
-        }
-    }
-
-    /**
-     * @param $column
-     * @param $item
-     *
-     * @return mixed
-     */
-    private function tapThroughObjects($column, $item)
-    {
-        $taps = explode('->', $column);
-
-        $objectToSearch = $item;
-        $columnToSearch = array_pop($taps);
-
-        foreach ($taps as $tapKey => $tap) {
-            // Keep tapping till we hit the last object.
-            $objectToSearch = $objectToSearch->$tap;
-        }
-
-        return [$objectToSearch, $columnToSearch];
     }
 
     /**
