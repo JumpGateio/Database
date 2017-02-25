@@ -13,7 +13,26 @@ use JumpGate\Database\Traits\Searching;
  * It allows you to tab through collections into other object or collections.
  * It also allows you to run a getWhere on a collection to find objects.
  *
- * @package JumpGate\Core\Database
+ * @package JumpGate\Database
+ *
+ * @method getWhere(string $column, string $values)
+ * @method getWhereNot(string $column, string $values)
+ *
+ * @method getWhereIn(string $column, array $values)
+ * @method getWhereInFirst(string $column, array $values)
+ * @method getWhereInLast(string $column, array $values)
+ * @method getWhereNotIn(string $column, array $values)
+ *
+ * @method getWhereBetween(string $column, array $values)
+ * @method getWhereNotBetween(string $column, array $values)
+ *
+ * @method getWhereLike(string $column, string $values)
+ * @method getWhereNotLike(string $column, string $values)
+ *
+ * @method getWhereNull(string $column)
+ * @method getWhereNotNull(string $column)
+ *
+ * @method getWhereMany(array $column)
  */
 class EloquentCollection extends Collection
 {

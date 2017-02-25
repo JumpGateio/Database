@@ -1,11 +1,11 @@
 {
-    "name":        "jumpgateio/database",
+    "name":        "jumpgate/database",
     "description": "Database helpers for Laravel sites.",
     "license":     "MIT",
     "authors":     [
         {
-            "name":  "Stygian",
-            "email": "stygian.warlock.v2@gmail.com"
+            "name":  "Travis Blasingame",
+            "email": "tpblasingame@gmail.com"
         },
         {
             "name":  "Brandon Hyde",
@@ -16,13 +16,16 @@
         "illuminate/database": "^5.0"
     },
     "require-dev": {
-        "phpspec/phpspec": "~2.1",
-        "henrikbjorn/phpspec-code-coverage": "~0.2"
+        "fzaninotto/faker": "~1.4",
+        "mockery/mockery": "0.9.*",
+        "orchestra/testbench": "~3.4",
+        "phpunit/phpunit": "~5.7"
     },
     "autoload":    {
         "psr-4":    {
+            "Tests\\": "tests",
             "JumpGate\\Database\\": "src/JumpGate/Database"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
