@@ -2,14 +2,14 @@
 
 namespace Tests;
 
-use JumpGate\Database\Collections\EloquentCollection;
+use JumpGate\Database\Collections\SupportCollection;
 use Orchestra\Testbench\TestCase;
 use stdClass;
 
-class EloquentCollectionTest extends TestCase
+class SupportCollectionTest extends TestCase
 {
     /**
-     * @var \JumpGate\Database\Collections\EloquentCollection
+     * @var \JumpGate\Database\Collections\SupportCollection
      */
     protected $collection;
 
@@ -17,7 +17,7 @@ class EloquentCollectionTest extends TestCase
     {
         parent::setUp();
 
-        $this->collection = new EloquentCollection;
+        $this->collection = new SupportCollection;
 
         $testData =
             [
@@ -68,7 +68,7 @@ class EloquentCollectionTest extends TestCase
             $newParent->name = $data['name'];
             $newParent->age  = $data['age'];
 
-            $newParent->kids = new EloquentCollection;
+            $newParent->kids = new SupportCollection;
             $newChild        = new stdClass;
             $newChild->name  = $data['kids']['name'];
             $newChild->age   = $data['kids']['age'];
@@ -241,7 +241,7 @@ class EloquentCollectionTest extends TestCase
     {
         $data = $this->collection->first()->kids->name;
 
-        $this->assertInstanceOf(\JumpGate\Database\Collections\EloquentCollection::class, $data);
+        $this->assertInstanceOf(\JumpGate\Database\Collections\SupportCollection::class, $data);
         $this->assertEquals('zack', $data->first());
         $this->assertCount(1, $data);
     }
