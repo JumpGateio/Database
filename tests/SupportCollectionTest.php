@@ -249,10 +249,40 @@ class SupportCollectionTest extends TestCase
     /** @test */
     public function it_explodes_a_string_and_returns_a_collection()
     {
-        $string = 'Testing exploding a string';
+        $string     = 'Testing exploding a string';
         $collection = SupportCollection::explode(' ', $string);
 
         $this->assertCount(4, $collection);
         $this->assertInstanceOf(SupportCollection::class, $collection);
+    }
+
+    /** @test */
+    public function is_parses_multiple_types_to_a_collection()
+    {
+        $commaString = SupportCollection::parseMixed(',foo,bar,baz,', ',|+');
+        $pipeString  = SupportCollection::parseMixed('foo|bar|baz', ',|+');
+        $plusString  = SupportCollection::parseMixed('foo+bar+baz', ',|+');
+        $allString   = SupportCollection::parseMixed('foo,|+bar+baz', ',|+');
+        $array       = SupportCollection::parseMixed(['foo', 'bar', 'baz']);
+
+        // All values should come out equal.
+        $this->assertTrue(($commaString->values() == $pipeString->values()));
+        $this->assertTrue(($pipeString->values() == $plusString->values()));
+        $this->assertTrue(($plusString->values() == $array->values()));
+        $this->assertTrue(($array->values() == $allString->values()));
+
+        // All values should return a collection.
+        $this->assertInstanceOf(SupportCollection::class, $commaString);
+        $this->assertInstanceOf(SupportCollection::class, $pipeString);
+        $this->assertInstanceOf(SupportCollection::class, $plusString);
+        $this->assertInstanceOf(SupportCollection::class, $allString);
+        $this->assertInstanceOf(SupportCollection::class, $array);
+
+        // All values should have the same number of items.
+        $this->assertCount(3, $commaString);
+        $this->assertCount(3, $pipeString);
+        $this->assertCount(3, $plusString);
+        $this->assertCount(3, $allString);
+        $this->assertCount(3, $array);
     }
 }
