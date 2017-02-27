@@ -245,4 +245,14 @@ class EloquentCollectionTest extends TestCase
         $this->assertEquals('zack', $data->first());
         $this->assertCount(1, $data);
     }
+
+    /** @test */
+    public function it_explodes_a_string_and_returns_a_collection()
+    {
+        $string = 'Testing exploding a string';
+        $collection = EloquentCollection::explode(' ', $string);
+
+        $this->assertCount(4, $collection);
+        $this->assertInstanceOf(EloquentCollection::class, $collection);
+    }
 }

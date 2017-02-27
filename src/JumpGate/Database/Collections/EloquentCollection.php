@@ -4,6 +4,7 @@ namespace JumpGate\Database\Collections;
 
 use Illuminate\Database\Eloquent\Collection;
 use JumpGate\Database\Traits\Collection\Chaining;
+use JumpGate\Database\Traits\Collection\Helpers;
 use JumpGate\Database\Traits\Collection\Searching;
 
 /**
@@ -45,6 +46,11 @@ class EloquentCollection extends Collection
      * Add get where searching to collection
      */
     use Searching;
+
+    /**
+     * Adds extra functionality to collections.
+     */
+    use Helpers;
 
     /**
      * Dynamically retrieve attributes on the model.
