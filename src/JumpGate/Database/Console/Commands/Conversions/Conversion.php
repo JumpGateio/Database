@@ -2,7 +2,7 @@
 
 namespace JumpGate\Database\Console\Commands\Conversions;
 
-use JumpGate\Database\Traits\ProgressBarTrait;
+use JumpGate\Database\Traits\Console\ProgressBarTrait;
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Facades\DB;

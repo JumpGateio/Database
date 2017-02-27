@@ -1,6 +1,6 @@
 <?php
 
-namespace JumpGate\Database\Traits;
+namespace JumpGate\Database\Traits\Models;
 
 use Illuminate\Support\Str;
 

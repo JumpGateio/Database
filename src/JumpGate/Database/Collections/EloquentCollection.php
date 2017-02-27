@@ -3,8 +3,8 @@
 namespace JumpGate\Database\Collections;
 
 use Illuminate\Database\Eloquent\Collection;
-use JumpGate\Database\Traits\Chaining;
-use JumpGate\Database\Traits\Searching;
+use JumpGate\Database\Traits\Collection\Chaining;
+use JumpGate\Database\Traits\Collection\Searching;
 
 /**
  * Class Collection

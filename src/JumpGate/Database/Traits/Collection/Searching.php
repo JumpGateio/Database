@@ -1,9 +1,9 @@
 <?php
 
-namespace JumpGate\Database\Traits;
+namespace JumpGate\Database\Traits\Collection;
 
-trait Searching {
-
+trait Searching
+{
     public function searchingCallMethod($method, $args)
     {
         return $this->magicWhere(snake_case($method), $args);

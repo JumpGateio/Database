@@ -1,9 +1,9 @@
 <?php
 
-namespace JumpGate\Database\Traits;
+namespace JumpGate\Database\Traits\Collection;
 
-trait Chaining {
-
+trait Chaining
+{
     /**
      * Dynamically retrieve attributes on the model.
      *
@@ -26,7 +26,7 @@ trait Chaining {
             }
 
             // The next item in the chain is a collection
-            if (is_object($item) && !$item instanceof self && $item->$key instanceof self) {
+            if (is_object($item) && ! $item instanceof self && $item->$key instanceof self) {
                 foreach ($item->$key as $subItem) {
                     $newCollection->put($newCollection->count(), $subItem);
                 }
