@@ -237,6 +237,66 @@ class SupportCollectionTest extends TestCase
     }
 
     /** @test */
+    public function it_inserts_an_item_after_another()
+    {
+        $collection = new SupportCollection([
+            'testing',
+            'inserting',
+            'after',
+            'this',
+            'should',
+            'work'
+        ]);
+
+        $collection->insertAfter('TESTING', 3);
+
+        $this->assertCount(7, $collection);
+        $this->assertEquals('TESTING', $collection->get(4));
+    }
+
+    /** @test */
+    public function it_inserts_an_item_before_another()
+    {
+        $collection = new SupportCollection([
+            'testing',
+            'inserting',
+            'after',
+            'this',
+            'should',
+            'work'
+        ]);
+
+        $collection->insertBefore('TESTING', 3);
+
+        $this->assertCount(7, $collection);
+        $this->assertEquals('TESTING', $collection->get(3));
+    }
+
+    /** @test */
+    public function it_converts_a_collection_to_an_array_usable_by_select_drop_downs()
+    {
+        $collection = new SupportCollection([
+            (object)[
+                'id' => 1,
+                'name' => 'Tom'
+            ],
+            (object)[
+                'id' => 2,
+                'name' => 'Bill'
+            ],
+            (object)[
+                'id' => 3,
+                'name' => 'Katy'
+            ],
+        ]);
+        $array = $collection->toSelectArray('Select One', 'id', 'name');
+
+        $this->assertTrue(is_array($array));
+        $this->assertCount(4, $array);
+        $this->assertEquals('Select One', head($array));
+    }
+
+    /** @test */
     public function it_taps_through_a_collection_and_retrieves_a_collection()
     {
         $data = $this->collection->first()->kids->name;

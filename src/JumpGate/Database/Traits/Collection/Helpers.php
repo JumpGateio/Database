@@ -5,6 +5,26 @@ namespace JumpGate\Database\Traits\Collection;
 trait Helpers
 {
     /**
+     * Turn a collection into a drop down for an html select element.
+     *
+     * @param  string $firstOptionText Text for the first object in the select array.
+     * @param  string $key             The column to use for the key column in the option element.
+     * @param  string $value           The column to use for the name column in the option element.
+     *
+     * @return array                    The new select element array.
+     */
+    public function toSelectArray($firstOptionText = 'Select one', $key = 'id', $value = 'name')
+    {
+        $array = $this->pluck($value, $key);
+
+        if ($firstOptionText !== false) {
+            $array->prepend($firstOptionText, '');
+        }
+
+        return $array->toArray();
+    }
+
+    /**
      * Explode a string and return a collection.
      *
      * @param string $delimiter

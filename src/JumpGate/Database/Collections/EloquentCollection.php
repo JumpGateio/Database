@@ -76,7 +76,6 @@ class EloquentCollection extends Collection
      */
     public function __call($method, $args)
     {
-
         // No data in the collection.
         if ($this->count() <= 0) {
             return $this;
@@ -89,57 +88,5 @@ class EloquentCollection extends Collection
 
         // Run the command on each object in the collection.
         return $this->chainingCallMethod($method, $args);
-    }
-
-    /**
-     * Insert into an object
-     *
-     * Should be able to do this with methods
-     * that already exist on collection.
-     *
-     * @param mixed $value
-     * @param int   $afterKey
-     *
-     * @return Collection
-     */
-    public function insertAfter($value, $afterKey)
-    {
-        $new_object = new self();
-
-        foreach ((array)$this->items as $k => $v) {
-            if ($afterKey == $k) {
-                $new_object->add($value);
-            }
-
-            $new_object->add($v);
-        }
-
-        $this->items = $new_object->items;
-
-        return $this;
-    }
-
-    /**
-     * Turn a collection into a drop down for an html select element.
-     *
-     * @param  string $firstOptionText Text for the first object in the select array.
-     * @param  string $id              The column to use for the id column in the option element.
-     * @param  string $name            The column to use for the name column in the option element.
-     *
-     * @return array                    The new select element array.
-     */
-    public function toSelectArray($firstOptionText = 'Select one', $id = 'id', $name = 'name')
-    {
-        $selectArray = [];
-
-        if ($firstOptionText != false) {
-            $selectArray[0] = $firstOptionText;
-        }
-
-        foreach ($this->items as $item) {
-            $selectArray[$item->{$id}] = $item->{$name};
-        }
-
-        return $selectArray;
     }
 }

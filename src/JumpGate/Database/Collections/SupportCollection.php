@@ -53,6 +53,60 @@ class SupportCollection extends Collection
     use Helpers;
 
     /**
+     * Add an item to the collection.
+     *
+     * @param  mixed $item
+     *
+     * @return $this
+     */
+    public function add($item)
+    {
+        $this->items[] = $item;
+
+        return $this;
+    }
+
+    /**
+     * Insert into a collection after the given key.
+     *
+     * Should be able to do this with methods
+     * that already exist on collection.
+     *
+     * @param mixed $value
+     * @param int   $afterKey
+     *
+     * @return Collection
+     */
+    public function insertAfter($value, $afterKey)
+    {
+        $chunk = $this->splice($afterKey + 1);
+
+        return $this->items = $this->put($afterKey + 1, $value)
+                                   ->merge($chunk)
+                                   ->all();
+    }
+
+    /**
+     * Insert into a collection before the given key.
+     *
+     * Should be able to do this with methods
+     * that already exist on collection.
+     *
+     * @param mixed $value
+     * @param int   $afterKey
+     *
+     * @return Collection
+     */
+    public function insertBefore($value, $afterKey)
+    {
+        $chunk = $this->splice($afterKey);
+
+        return $this->items = $this->put($afterKey, $value)
+                                   ->merge($chunk)
+                                   ->all();
+    }
+
+    /**
      * Dynamically retrieve attributes on the model.
      *
      * @param  string $key
@@ -66,19 +120,6 @@ class SupportCollection extends Collection
     }
 
     /**
-     * Add an item to the collection.
-     *
-     * @param  mixed  $item
-     * @return $this
-     */
-    public function add($item)
-    {
-        $this->items[] = $item;
-
-        return $this;
-    }
-
-    /**
      * Allow a method to be run on the entire collection.
      *
      * @param string $method
@@ -88,7 +129,6 @@ class SupportCollection extends Collection
      */
     public function __call($method, $args)
     {
-
         // No data in the collection.
         if ($this->count() <= 0) {
             return $this;
@@ -101,57 +141,5 @@ class SupportCollection extends Collection
 
         // Run the command on each object in the collection.
         return $this->chainingCallMethod($method, $args);
-    }
-
-    /**
-     * Insert into an object
-     *
-     * Should be able to do this with methods
-     * that already exist on collection.
-     *
-     * @param mixed $value
-     * @param int   $afterKey
-     *
-     * @return Collection
-     */
-    public function insertAfter($value, $afterKey)
-    {
-        $new_object = new self();
-
-        foreach ((array)$this->items as $k => $v) {
-            if ($afterKey == $k) {
-                $new_object->add($value);
-            }
-
-            $new_object->add($v);
-        }
-
-        $this->items = $new_object->items;
-
-        return $this;
-    }
-
-    /**
-     * Turn a collection into a drop down for an html select element.
-     *
-     * @param  string $firstOptionText Text for the first object in the select array.
-     * @param  string $id              The column to use for the id column in the option element.
-     * @param  string $name            The column to use for the name column in the option element.
-     *
-     * @return array                    The new select element array.
-     */
-    public function toSelectArray($firstOptionText = 'Select one', $id = 'id', $name = 'name')
-    {
-        $selectArray = [];
-
-        if ($firstOptionText != false) {
-            $selectArray[0] = $firstOptionText;
-        }
-
-        foreach ($this->items as $item) {
-            $selectArray[$item->{$id}] = $item->{$name};
-        }
-
-        return $selectArray;
     }
 }
