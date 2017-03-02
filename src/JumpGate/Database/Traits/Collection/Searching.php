@@ -2,6 +2,8 @@
 
 namespace JumpGate\Database\Traits\Collection;
 
+use JumpGate\Database\Collections\SupportCollection;
+
 trait Searching
 {
     public function searchingCallMethod($method, $args)
@@ -19,28 +21,28 @@ trait Searching
      */
     private function magicWhere($method, $args)
     {
-        $whereStatement = explode('_', $method);
+        $whereStatement = SupportCollection::explode('_', $method);
 
         // Get where
-        if (count($whereStatement) == 2) {
-            return $this->getWhere($args[0], '=', $args[1]);
+        if ($whereStatement->count() == 2) {
+            return $this->performGetWhere($args[0], '=', $args[1]);
         }
 
-        $operators = [
+        $operators = new self([
             'in', 'between', 'like', 'null',
             'not',
             'first', 'last',
             'many',
-        ];
+        ]);
 
         // If an operator is found then add operators.
-        if (array_intersect($whereStatement, $operators)) {
+        if ($whereStatement->intersect($operators)) {
             list($operator, $firstOrLast, $inverse) = $this->determineMagicWhereDetails($whereStatement);
 
             $column = $args[0];
             $value  = (isset($args[1]) ? $args[1] : null);
 
-            return $this->getWhere(
+            return $this->performGetWhere(
                 $column,
                 $operator,
                 $value,
@@ -57,15 +59,20 @@ trait Searching
      */
     private function determineMagicWhereDetails($whereStatement)
     {
-        $finalOperator = '=';
-        $position      = null;
-        $not           = false;
+        $finalOperator = $whereStatement->intersect(['in', 'between', 'like', 'null', '='])
+                                        ->pipe(function ($collection) {
+                                            return $collection->count() ? $collection->first() : '=';
+                                        });
 
-        foreach ($whereStatement as $operator) {
-            $finalOperator = $this->checkMagicWhereFinalOperator($operator, $finalOperator);
-            $position      = $this->checkMagicWherePosition($operator, $position);
-            $not           = $this->checkMagicWhereNot($operator, $not);
-        }
+        $position = $whereStatement->intersect(['first', 'last'])
+                                   ->pipe(function ($collection) {
+                                       return $collection->count() ? $collection->first() : null;
+                                   });
+
+        $not = $whereStatement->intersect(['not'])
+                              ->pipe(function ($collection) {
+                                  return $collection->count() ? $collection->first() : false;
+                              });
 
         return [$finalOperator, $position, $not];
 
@@ -87,33 +94,6 @@ trait Searching
         //}
     }
 
-    private function checkMagicWhereFinalOperator($operator, $finalOperator)
-    {
-        if (in_array($operator, ['in', 'between', 'like', 'null', '='])) {
-            return $operator;
-        }
-
-        return $finalOperator;
-    }
-
-    private function checkMagicWherePosition($operator, $position)
-    {
-        if (in_array($operator, ['first', 'last'])) {
-            return $operator;
-        }
-
-        return $position;
-    }
-
-    private function checkMagicWhereNot($operator, $not)
-    {
-        if (in_array($operator, ['not'])) {
-            return true;
-        }
-
-        return $not;
-    }
-
     /**
      * Search a collection for the value specified.
      *
@@ -123,28 +103,43 @@ trait Searching
      * @param  boolean $inverse  Invert the results.
      * @param  string  $position Return the first or last object in the collection.
      *
-     * @return self                 Return the filtered collection.
+     * @return self              Return the filtered collection.
      */
-    protected function getWhere($column, $operator, $value = null, $inverse = false, $position = null)
+    protected function performGetWhere($column, $operator, $value = null, $inverse = false, $position = null)
     {
         $output = clone $this;
-        foreach ($output->items as $key => $item) {
-            if (strstr($column, '->')) {
-                $forget = $this->handleMultiTap($item, $column, $value, $operator, $inverse);
-            } else {
-                // No tap direct object access
-                $forget = $this->whereObject($item, $column, $operator, $value, $inverse);
-            }
 
-            if ($forget == true) {
-                $output->forget($key);
-                continue;
-            }
+        // Handle multi-tapping version if needed.
+        if (strstr($column, '->')) {
+            $output = $output->filter(function ($item) use ($column, $value, $operator, $inverse) {
+                return ! $this->handleMultiTap($item, $column, $value, $operator, $inverse);
+            });
+
+            return $this->setOutputByPosition($output, $position);
         }
 
-        // Handel first and last.
+        // Go directly to the whereObject.
+        $output = $output->filter(function ($item) use ($column, $value, $operator, $inverse) {
+            return ! $this->whereObject($item, $column, $operator, $value, $inverse);
+        });
+
+        return $this->setOutputByPosition($output, $position);
+    }
+
+    /**
+     * Return the results of the search.  Either all of the results
+     * or only the one at the position specified.
+     *
+     * @param collection $output   The collection that has been filtered by searching.
+     * @param string     $position Return the first or last object in the collection.
+     *
+     * @return mixed
+     */
+    private function setOutputByPosition($output, $position)
+    {
+        // Handle first and last.
         if (! is_null($position)) {
-            return $output->$position();
+            return $output->{$position}();
         }
 
         return $output;
@@ -159,7 +154,7 @@ trait Searching
      * @param  mixed   $value    The value to search for.
      * @param  boolean $inverse  Invert the results.
      *
-     * @return boolean              Return true if the object should be removed from the collection.
+     * @return boolean           Return true if the object should be removed from the collection.
      */
     private function whereObject($object, $column, $operator, $value = null, $inverse = false)
     {
@@ -183,6 +178,7 @@ trait Searching
         if (! in_array($object->$column, $value) && $inverse == false) {
             return true;
         }
+
         if (in_array($object->$column, $value) && $inverse == true) {
             return true;
         }
@@ -192,14 +188,12 @@ trait Searching
 
     private function getWhereBetween($object, $column, $value, $inverse)
     {
-        if ($inverse == false) {
-            if ($object->$column < $value[0] || $object->$column > $value[1]) {
-                return true;
-            }
-        } else {
-            if ($object->$column >= $value[0] && $object->$column <= $value[1]) {
-                return true;
-            }
+        if (($object->$column < $value[0] || $object->$column > $value[1]) && $inverse == false) {
+            return true;
+        }
+
+        if (($object->$column >= $value[0] && $object->$column <= $value[1]) && $inverse == true) {
+            return true;
         }
 
         return false;
@@ -210,6 +204,7 @@ trait Searching
         if (! strstr($object->$column, $value) && $inverse == false) {
             return true;
         }
+
         if (strstr($object->$column, $value) && $inverse == true) {
             return true;
         }
@@ -222,6 +217,7 @@ trait Searching
         if ((! is_null($object->$column) || $object->$column != null) && $inverse == false) {
             return true;
         }
+
         if ((is_null($object->$column) || $object->$column == null) && $inverse == true) {
             return true;
         }
@@ -234,6 +230,7 @@ trait Searching
         if ($object->$column != $value && $inverse == false) {
             return true;
         }
+
         if ($object->$column == $value && $inverse == true) {
             return true;
         }
