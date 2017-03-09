@@ -3,10 +3,9 @@
 namespace JumpGate\Database\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use JumpGate\Database\Collections\EloquentCollection;
-use JumpGate\Database\Traits\ActiveScopes;
-use JumpGate\Database\Traits\OrderByScopes;
+use JumpGate\Database\Traits\Models\ActiveScopes;
+use JumpGate\Database\Traits\Models\OrderByScopes;
 
 /**
  * @property string $uniqueId
