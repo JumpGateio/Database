@@ -4,8 +4,8 @@ namespace JumpGate\Database\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use JumpGate\Database\Collections\EloquentCollection;
-use JumpGate\Database\Traits\Models\ActiveScopes;
-use JumpGate\Database\Traits\Models\OrderByScopes;
+use JumpGate\Database\Traits\Model\ActiveScopes;
+use JumpGate\Database\Traits\Model\OrderByScopes;
 
 /**
  * @property string $uniqueId
