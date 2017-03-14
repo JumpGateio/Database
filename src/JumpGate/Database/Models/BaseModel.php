@@ -20,7 +20,7 @@ abstract class BaseModel extends Model
      *
      * @var boolean
      */
-    protected $jumpGateCollections = true;
+    public $jumpGateCollections = true;
 
     /**
      * Assign as observer to use
