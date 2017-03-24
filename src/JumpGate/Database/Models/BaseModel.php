@@ -8,7 +8,13 @@ use JumpGate\Database\Traits\Model\ActiveScopes;
 use JumpGate\Database\Traits\Model\OrderByScopes;
 
 /**
- * @property string $uniqueId
+ * Class BaseModel
+ *
+ * @package JumpGate\Database\Models
+ *
+ * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Query\Builder
  */
 abstract class BaseModel extends Model
 {
