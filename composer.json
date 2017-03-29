@@ -27,9 +27,11 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "Tests\\": "tests",
             "JumpGate\\Database\\": "src/JumpGate/Database"
         }
+    },
+    "autoload-dev": {
+        "Tests\\": "tests"
     },
     "minimum-stability": "stable"
 }
