@@ -5,12 +5,10 @@ namespace JumpGate\Database\Console\Commands\Conversions;
 use JumpGate\Database\Traits\Console\ProgressBarTrait;
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 abstract class Conversion extends Command
 {
-    use AddressTrait, PhoneTrait, SocialTrait, AlignmentTrait, ProgressBarTrait;
+    use ProgressBarTrait;
 
     /**
      * @var \Illuminate\Database\DatabaseManager
