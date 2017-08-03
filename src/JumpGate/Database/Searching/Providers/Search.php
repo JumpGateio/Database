@@ -16,6 +16,11 @@ class Search
      */
     public $search;
 
+    public function __construct($model)
+    {
+        $this->setModel($model);
+    }
+
     public function search(Collection $parameters)
     {
         $parameters->each(function ($value, $parameter) {
@@ -116,11 +121,11 @@ class Search
     /**
      * Set the model and the search builder.
      *
-     * @param string $class
+     * @param object $model
      */
-    protected function setModel($class)
+    protected function setModel($model)
     {
-        $this->model  = app($class);
-        $this->search = $this->model;
+        $this->model  = $model;
+        $this->search = $model;
     }
 }
