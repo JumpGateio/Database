@@ -10,7 +10,7 @@ trait CanSearch
             throw new \Exception('You must set a search provider on your model.');
         }
 
-        return new $this->searchProvider;
+        return new $this->searchProvider($this);
     }
 
     public function getSearchParameters()
