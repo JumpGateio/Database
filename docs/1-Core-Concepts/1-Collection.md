@@ -64,7 +64,7 @@ getWhereLast     | STRING $column<br />STRING $value          | This will return
 ### Example
 You can also look at `the tests <https://github.com/NukaSRB/Core/blob/master/tests/spec/JumpGate/Core/Database/CollectionSpec.php>`_ for more examples
 ```php
-  $aColleciton->getWhere('aField','Some Text');
+  $aCollection->getWhere('aField','Some Text');
   $aCollection->getWhere('relationship->aField', 'Some Text');
   $aCollection->getWhereNot('relationship->aField', 'Some Text');
 ```
