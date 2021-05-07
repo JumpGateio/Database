@@ -158,9 +158,9 @@ trait Searching
      */
     private function whereObject($object, $column, $operator, $value = null, $inverse = false)
     {
-        // Remove the object is the column does not exits.
+        // Remove the object if the column does not exist.
         // Only do this if we aren't looking for null
-        if (! $object->$column && $operator != 'null') {
+        if (isset($object->$column) === false && $operator != 'null') {
             return true;
         }
 
