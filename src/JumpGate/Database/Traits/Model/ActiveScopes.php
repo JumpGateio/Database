@@ -2,7 +2,7 @@
 
 namespace JumpGate\Database\Traits\Model;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class ActiveScopes
