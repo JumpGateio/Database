@@ -2,6 +2,8 @@
 
 namespace JumpGate\Database\Traits\Model;
 
+use Illuminate\Database\Query\Builder;
+
 /**
  * Class ActiveScopes
  *
@@ -15,9 +17,9 @@ trait ActiveScopes
     /**
      * Get only active rows.
      *
-     * @param $query The current query to append to
+     * @param Builder $query The current query to append to
      */
-    public function scopeActive($query)
+    public function scopeActive(Builder $query)
     {
         return $query->where('activeFlag', 1);
     }
@@ -25,9 +27,9 @@ trait ActiveScopes
     /**
      * Get only inactive rows.
      *
-     * @param $query The current query to append to
+     * @param Builder $query The current query to append to
      */
-    public function scopeInactive($query)
+    public function scopeInactive(Builder $query)
     {
         return $query->where('activeFlag', 0);
     }
